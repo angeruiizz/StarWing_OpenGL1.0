@@ -6,8 +6,7 @@ import android.content.Context;
 import android.opengl.GLSurfaceView.Renderer;
 import android.opengl.GLU;
 
-import java.io.IOException;
-import java.io.InputStream;
+
 import java.nio.ByteBuffer;
 import java.nio.ByteOrder;
 import java.nio.FloatBuffer;
@@ -26,9 +25,12 @@ public class MyOpenGLRenderer implements Renderer{
     private int width;
     private FloatBuffer vertexBuffer;
     private FloatBuffer texCoordBuffer;
+    private Starfield starfield;
 
     public MyOpenGLRenderer(Context context){
         this.context = context;
+        this.fondo  = new Fondo();
+        this.starfield = new Starfield( 10,10); //puntos por línea
     }
 
     public void onSurfaceCreated(GL10 gl, EGLConfig config) {
@@ -53,30 +55,36 @@ public class MyOpenGLRenderer implements Renderer{
         gl.glLoadIdentity();
     }
 
+    private void setPerspectiveProjection(GL10 gl) {
+        gl.glMatrixMode(GL10.GL_PROJECTION);
+        gl.glLoadIdentity();
+        GLU.gluPerspective(gl, 45.0f, (float) width / height, 1.0f, 10.0f); // Configuración de perspectiva
+        gl.glMatrixMode(GL10.GL_MODELVIEW);
+        gl.glLoadIdentity();
+    }
+
     @Override
     public void onSurfaceChanged(GL10 gl, int width, int height) {
         this.width = width;
         this.height = height;
 
-        // Actualizar vértices según el aspecto de la pantalla
-        updateVerticesForAspectRatio(width, height);
-
         // Configurar el viewport
         gl.glViewport(0, 0, width, height);
 
+        // Configurar la proyección
+        setPerspectiveProjection(gl);
     }
+
 
     @Override
     public void onDrawFrame(GL10 gl10) {
-        setOrthographicProjection(gl10);
-        // Limpiar la pantalla
         gl10.glClear(GL10.GL_COLOR_BUFFER_BIT | GL10.GL_DEPTH_BUFFER_BIT);
-        GLU.gluLookAt(gl10, 0, 0, 5, 0f, 0f, 0f, 0f, 1f, 0f);
-
-        gl10.glPushMatrix();
+        gl10.glEnable(GL10.GL_TEXTURE_2D);
         fondo.draw(gl10);
-        gl10.glPopMatrix();
+        gl10.glDisable(GL10.GL_TEXTURE_2D);
 
+        starfield.update();
+        starfield.draw(gl10);
     }
 
     private void updateVerticesForAspectRatio(int screenWidth, int screenHeight) {
