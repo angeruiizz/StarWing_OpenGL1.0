@@ -25,24 +25,22 @@ public class MyOpenGLRenderer implements Renderer{
     private int width;
     private FloatBuffer vertexBuffer;
     private FloatBuffer texCoordBuffer;
-    private Starfield starfield;
+    private estrellesMov estrellesMov;
 
     public MyOpenGLRenderer(Context context){
         this.context = context;
         this.fondo  = new Fondo();
-        this.starfield = new Starfield( 100,20); //puntos por línea
+        this.estrellesMov = new estrellesMov( 50,20); //puntos por línea
     }
 
     public void onSurfaceCreated(GL10 gl, EGLConfig config) {
-        // Image Background color
+        //Background color
         gl.glClearColor(0.0f, 0.0f, 0.0f, 0.5f);
-
 
         fondo = new Fondo();
         fondo.loadTexture(gl, context);
 
     }
-
 
     private void setOrthographicProjection(GL10 gl){
         gl.glMatrixMode(GL10.GL_PROJECTION);
@@ -70,11 +68,9 @@ public class MyOpenGLRenderer implements Renderer{
 
         // Configurar el viewport
         gl.glViewport(0, 0, width, height);
-
         // Configurar la proyección
         setPerspectiveProjection(gl);
     }
-
 
     @Override
     public void onDrawFrame(GL10 gl10) {
@@ -83,9 +79,8 @@ public class MyOpenGLRenderer implements Renderer{
         fondo.draw(gl10);
         gl10.glDisable(GL10.GL_TEXTURE_2D);
 
-        starfield.update();
-        starfield.draw(gl10);
-
+        estrellesMov.update();
+        estrellesMov.draw(gl10);
     }
 
     private void updateVerticesForAspectRatio(int screenWidth, int screenHeight) {
@@ -107,8 +102,6 @@ public class MyOpenGLRenderer implements Renderer{
         vertexBuffer.put(vertices);
         vertexBuffer.position(0);
     }
-
-
 
 }
 
