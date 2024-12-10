@@ -20,20 +20,20 @@ public class MyGLSurfaceView extends GLSurfaceView {
 
     @Override
     public boolean onTouchEvent(MotionEvent event) {
-        float x = event.getX();
+        float x = event.getX(); //capturar x e y
         float y = event.getY();
 
         if (event.getAction() == MotionEvent.ACTION_MOVE) {
             float dx = x - previousX;
             float dy = y - previousY;
 
-            float scaleFactor = 0.01f; // Ajustar la sensibilidad
+            float scaleFactor = 0.005f; //per la sensibilitat
             renderer.getNave().move(dx * scaleFactor, -dy * scaleFactor); // Mover la nave
-            requestRender(); // Redibujar la escena
+            requestRender();
         }
 
-        previousX = x;
-        previousY = y; // Asegúrate de actualizar las coordenadas previas
+        previousX = x; //las nuevas pasan a ser las antiguas
+        previousY = y;
         return true;
     }
 }

@@ -13,6 +13,13 @@ public class Nau3D {
     }
 
     public void move(float dx, float dy) {
+        float maxX = 1.0f; //limit dret
+        float minX = -1.0f; //limt esquerra
+        float maxY = 1.0f; //limit superior
+        float minY = -1.0f; //limit inferior
+
+        this.x = Math.max(minX, Math.min(maxX, this.x + dx));
+        this.y = Math.max(minY, Math.min(maxY, this.y + dy));
         this.x += dx;
         this.y += dy;
         System.out.println("Nueva posición de la nave: X=" + x + ", Y=" + y);
@@ -20,11 +27,11 @@ public class Nau3D {
 
     public void draw(GL10 gl) {
         System.out.println("Dibujando en: X=" + x + ", Y=" + y + ", Z=" + z);
-        gl.glPushMatrix(); // Guardar la matriz actual
-        gl.glScalef(0.5f, 0.5f, 0.5f); // Ajusta el tamaño del modelo si es necesario
-        gl.glTranslatef(x, y, z); // Mover a la posición de la nave
+        gl.glPushMatrix();
+        gl.glScalef(0.5f, 0.5f, 0.5f);
+        gl.glTranslatef(x, y, z);
         model.draw(gl); //fem servir el de la clase loadObject3D
-        gl.glPopMatrix(); // Restaurar la matriz original
+        gl.glPopMatrix();
     }
 
     public void setPosition(float x, float y, float z) {
