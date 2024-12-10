@@ -10,14 +10,9 @@ import android.opengl.GLU;
 import java.nio.ByteBuffer;
 import java.nio.ByteOrder;
 import java.nio.FloatBuffer;
-import javax.microedition.khronos.opengles.GL10;
-import android.content.Context;
-import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
-import android.opengl.GLUtils;
 
 
-public class MyOpenGLRenderer implements Renderer{
+public class MyOpenGLRenderer implements Renderer {
     private FloatBuffer vertexBuffer;
     private FloatBuffer texCoordBuffer;
     private Context context;
@@ -25,6 +20,7 @@ public class MyOpenGLRenderer implements Renderer{
 
     private Fondo fondo;
     private estrellesMov estrellesMov;
+    private LoadObject3D loadObject3D;
     private Nau3D nau3D;
 
     private int height;
@@ -36,14 +32,15 @@ public class MyOpenGLRenderer implements Renderer{
         this.context = context;
         this.fondo  = new Fondo();
         this.estrellesMov = new estrellesMov( 50,20); //puntos por línea
-        this.nau3D = new Nau3D(context, R.raw.nau);
+
+        LoadObject3D modelNau = new LoadObject3D(context, R.raw.nau);
+        this.nau3D = new Nau3D(modelNau);
     }
 
     public void onSurfaceCreated(GL10 gl, EGLConfig config) {
         //Background color
         gl.glClearColor(0.0f, 0.0f, 0.0f, 0.5f);
 
-        fondo = new Fondo();
         fondo.loadTexture(gl, context);
 
     }
@@ -69,13 +66,12 @@ public class MyOpenGLRenderer implements Renderer{
 
     @Override
     public void onSurfaceChanged(GL10 gl, int width, int height) {
-        this.width = width;
-        this.height = height;
-
-        // Configurar el viewport
         gl.glViewport(0, 0, width, height);
-        // Configurar la proyección
-        setPerspectiveProjection(gl);
+        gl.glMatrixMode(GL10.GL_PROJECTION);
+        gl.glLoadIdentity();
+        GLU.gluPerspective(gl, 45.0f, (float) width / height, 1.0f, 10.0f);
+        gl.glMatrixMode(GL10.GL_MODELVIEW);
+        gl.glLoadIdentity();
     }
 
     @Override
@@ -86,7 +82,7 @@ public class MyOpenGLRenderer implements Renderer{
         gl10.glDisable(GL10.GL_TEXTURE_2D);
 
         gl10.glPushMatrix();// Reset model-view matrix ( NEW )
-        nau3D.draw(gl10);                   // Draw triangle ( NEW )
+        nau3D.draw(gl10);
         gl10.glPopMatrix();
 
 
@@ -94,25 +90,10 @@ public class MyOpenGLRenderer implements Renderer{
         estrellesMov.draw(gl10);
     }
 
-    private void updateVerticesForAspectRatio(int screenWidth, int screenHeight) {
-        // Calcular la relación de aspecto
-        float aspectRatio = (float) screenWidth / screenHeight;
-
-        // Actualizar las coordenadas de los vértices
-        vertices = new float[] {
-                -aspectRatio, -1.0f, 0.0f,  // Inferior izquierdo
-                aspectRatio, -1.0f, 0.0f,  // Inferior derecho
-                -aspectRatio,  1.0f, 0.0f,  // Superior izquierdo
-                aspectRatio,  1.0f, 0.0f   // Superior derecho
-        };
-
-        // Actualizar el buffer de vértices
-        ByteBuffer vb = ByteBuffer.allocateDirect(vertices.length * 4);
-        vb.order(ByteOrder.nativeOrder());
-        vertexBuffer = vb.asFloatBuffer();
-        vertexBuffer.put(vertices);
-        vertexBuffer.position(0);
+    public Nau3D getNave() {
+        return nau3D;
     }
+
 
 }
 
