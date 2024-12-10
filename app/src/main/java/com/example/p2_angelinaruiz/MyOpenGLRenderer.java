@@ -30,7 +30,7 @@ public class MyOpenGLRenderer implements Renderer{
     public MyOpenGLRenderer(Context context){
         this.context = context;
         this.fondo  = new Fondo();
-        this.starfield = new Starfield( 10,10); //puntos por línea
+        this.starfield = new Starfield( 100,20); //puntos por línea
     }
 
     public void onSurfaceCreated(GL10 gl, EGLConfig config) {
@@ -85,6 +85,7 @@ public class MyOpenGLRenderer implements Renderer{
 
         starfield.update();
         starfield.draw(gl10);
+
     }
 
     private void updateVerticesForAspectRatio(int screenWidth, int screenHeight) {
