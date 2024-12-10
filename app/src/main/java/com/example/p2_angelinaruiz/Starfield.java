@@ -19,20 +19,17 @@ public class Starfield {
         this.speed = 0.01f; // Velocidad de desplazamiento
         points = new float[rows * cols * 3]; // Cada punto tiene (x, y, z)
 
-        // Generar posiciones iniciales en una cuadrícula
+        Random random = new Random(); // Generador de números aleatorios
+
         int index = 0;
-        float startY = -0.4f; // Ajusta esto según el inicio del suelo verde
+        float startY = 1.0f; // Ajusta esto según el inicio del suelo verde
         float endY = -1.0f;   // Límite inferior de la pantalla
 
         for (int i = 0; i < rows; i++) {
             for (int j = 0; j < cols; j++) {
-                float x = (float) j / (cols - 1) * 2 - 1; // x entre -1 y 1
-                float y = startY + (float) i / (rows - 1) * (endY - startY); // y entre -0.4 y -1
-                float z = (float) Math.random() * 2 - 1; // z entre -1 y 1
-
-                points[index++] = x; // Coordenada X
-                points[index++] = y; // Coordenada Y
-                points[index++] = z; // Coordenada Z
+                points[index++] = random.nextFloat() * 2 - 1; // x entre -1 y 1 (aleatorio)
+                points[index++] = startY + random.nextFloat() * (endY - startY); // y aleatorio entre -0.4 y -1
+                points[index++] = random.nextFloat() * -2 - 1; // z entre -1 y -3 (aleatorio)
             }
         }
 
@@ -45,8 +42,10 @@ public class Starfield {
     }
 
     public void update() {
-        float startY = -0.4f; // Inicio del suelo verde
+        float startY = 1.0f; // Inicio del suelo verde
         float endY = -1.0f;   // Límite inferior
+
+        Random random = new Random();
 
         for (int i = 0; i < points.length; i += 3) {
             points[i + 1] -= speed; // Mover hacia abajo en Y
@@ -58,8 +57,8 @@ public class Starfield {
             // Si el punto sale del límite inferior en Y, reubicarlo
             if (points[i + 1] < endY) {
                 points[i + 1] = startY;
-                points[i] = (float) Math.random() * 2 - 1; // Nueva posición X
-                points[i + 2] = (float) Math.random() * -2 - 1; // Reiniciar Z lejos
+                points[i] = random.nextFloat() * 2 - 1; // Nueva posición X aleatoria
+                points[i + 2] = random.nextFloat() * -2 - 1; // Nueva posición Z aleatoria
             }
 
             // Si el punto se acerca demasiado en Z, reubicarlo al fondo
