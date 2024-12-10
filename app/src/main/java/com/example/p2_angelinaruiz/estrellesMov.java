@@ -96,8 +96,7 @@ public class estrellesMov {
         gl.glDisableClientState(GL10.GL_VERTEX_ARRAY);
     }
 
-    public void setSpeed(Float speed2){
-        speed = speed2;
-
+    public void setSpeed(Float speed){
+        this.speed = speed;
     }
 }

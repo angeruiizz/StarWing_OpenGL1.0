@@ -18,19 +18,25 @@ import android.opengl.GLUtils;
 
 
 public class MyOpenGLRenderer implements Renderer{
-    private Context context;
-    private float[] vertices;
-    private Fondo fondo;
-    private int height;
-    private int width;
     private FloatBuffer vertexBuffer;
     private FloatBuffer texCoordBuffer;
+    private Context context;
+    private float[] vertices;
+
+    private Fondo fondo;
     private estrellesMov estrellesMov;
+    private Nau3D nau3D;
+
+    private int height;
+    private int width;
+    private int angle;
+
 
     public MyOpenGLRenderer(Context context){
         this.context = context;
         this.fondo  = new Fondo();
         this.estrellesMov = new estrellesMov( 50,20); //puntos por línea
+        this.nau3D = new Nau3D(context, R.raw.nau);
     }
 
     public void onSurfaceCreated(GL10 gl, EGLConfig config) {
@@ -78,6 +84,11 @@ public class MyOpenGLRenderer implements Renderer{
         gl10.glEnable(GL10.GL_TEXTURE_2D);
         fondo.draw(gl10);
         gl10.glDisable(GL10.GL_TEXTURE_2D);
+
+        gl10.glPushMatrix();// Reset model-view matrix ( NEW )
+        nau3D.draw(gl10);                   // Draw triangle ( NEW )
+        gl10.glPopMatrix();
+
 
         estrellesMov.update();
         estrellesMov.draw(gl10);
