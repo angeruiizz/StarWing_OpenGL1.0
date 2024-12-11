@@ -38,10 +38,16 @@ public class MyOpenGLRenderer implements Renderer {
     }
 
     public void onSurfaceCreated(GL10 gl, EGLConfig config) {
-        //Background color
-        gl.glClearColor(0.0f, 0.0f, 0.0f, 0.5f);
+        gl.glClearColor(0.0f, 0.0f, 0.0f, 1.0f); //color de fons
 
-        fondo.loadTexture(gl, context);
+
+        gl.glEnable(GL10.GL_LIGHTING); //hablitar la llum
+        gl.glEnable(GL10.GL_LIGHT0); //font de llum 0 (global)
+
+        float[] ambientLight = { 0.1f, 0.1f, 0.3f, 1.0f }; // Color RGBA, ajusta intensitat y color, representa blau fosc
+        gl.glLightfv(GL10.GL_LIGHT0, GL10.GL_AMBIENT, ambientLight, 0);
+
+        fondo.loadTexture(gl, context); // Cargar texturas
 
     }
 
@@ -80,6 +86,15 @@ public class MyOpenGLRenderer implements Renderer {
         gl10.glEnable(GL10.GL_TEXTURE_2D);
         fondo.draw(gl10);
         gl10.glDisable(GL10.GL_TEXTURE_2D);
+
+        //llum puntual
+        gl10.glEnable(GL10.GL_LIGHT1); // Fuente de luz 1
+        float[] diffuseLight = { 1.0f, 1.0f, 1.0f, 1.0f }; // Luz difusa (color blanco)
+        gl10.glLightfv(GL10.GL_LIGHT1, GL10.GL_DIFFUSE, diffuseLight, 0);
+
+        //per a que segueixi la nau
+        float[] lightPosition = { nau3D.getX(), nau3D.getY(), nau3D.getZ(), 1.0f };
+        gl10.glLightfv(GL10.GL_LIGHT1, GL10.GL_POSITION, lightPosition, 0);
 
         gl10.glPushMatrix();// Reset model-view matrix ( NEW )
         nau3D.draw(gl10);

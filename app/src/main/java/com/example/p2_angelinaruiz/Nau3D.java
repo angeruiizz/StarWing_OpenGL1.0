@@ -7,6 +7,7 @@ public class Nau3D {
     private float y = 0.0f; // Posición Y
     private float z = -1.5f; // Posición Z inicial
     private final LoadObject3D model; // Modelo de la nave
+    private float rotationAngle = 0.0f; // Ángulo de rotación
 
     public Nau3D(LoadObject3D model) {
         this.model = model;
@@ -27,6 +28,7 @@ public class Nau3D {
 
     public void draw(GL10 gl) {
         System.out.println("Dibujando en: X=" + x + ", Y=" + y + ", Z=" + z);
+
         gl.glPushMatrix();
         gl.glScalef(0.5f, 0.5f, 0.5f);
         gl.glTranslatef(x, y, z);
