@@ -35,7 +35,7 @@ public class estrellesMov {
             for (int j = 0; j < cols; j++) {
                 coord[index++] = random.nextFloat() * 2 - 1; // x entre -1 y 1 
                 coord[index++] = random.nextFloat() * 2 -1; // y aleatorio
-                coord[index++] = random.nextFloat() * -1.5f - 0.5f; // z entre -0.5 y -2.0
+                coord[index++] = random.nextFloat() * -2.5f - 0.5f; // z entre -0.5 y -3.0
 
             }
         }
@@ -67,7 +67,7 @@ public class estrellesMov {
                 coord[i + 1] = startY; //torna al inici de y
                 //coord[i+1] = random.nextFloat * 2 - 1 //pos de y aleatoria
                 coord[i] = random.nextFloat() * 2 - 1; //pos X aleatoria
-                coord[i + 2] = random.nextFloat() * -2 - 1; //nova pos aleatoria a Z de -1 a -3
+                coord[i + 2] = random.nextFloat() * -2.5f - 0.5f; //nova pos aleatoria a Z de -1 a -3
             }
         }
 

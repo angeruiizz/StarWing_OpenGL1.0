@@ -31,7 +31,7 @@ public class MyGLSurfaceView extends GLSurfaceView {
             float dy = y - previousY;
 
             float scaleFactor = 0.005f; //per la sensibilitat
-            renderer.getNave().move(dx * scaleFactor, -dy * scaleFactor); // Mover la nave
+            renderer.getNave().move(-dx * scaleFactor, -dy * scaleFactor); // Mover la nave
             requestRender();
         }
 
@@ -52,10 +52,10 @@ public class MyGLSurfaceView extends GLSurfaceView {
                 renderer.getNave().move(0, -moveDistance);
                 break;
             case KeyEvent.KEYCODE_DPAD_LEFT: //esq
-                renderer.getNave().move(-moveDistance, 0);
+                renderer.getNave().move(moveDistance, 0);
                 break;
             case KeyEvent.KEYCODE_DPAD_RIGHT: //drta
-                renderer.getNave().move(moveDistance, 0);
+                renderer.getNave().move(-moveDistance, 0);
                 break;
             default:
                 return super.onKeyDown(keyCode, event);

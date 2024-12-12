@@ -79,8 +79,6 @@ public class Fondo {
         // Configurar la proyección ortográfica
         gl.glMatrixMode(GL10.GL_PROJECTION);
         gl.glLoadIdentity();
-        gl.glOrthof(-1, 1, -1, 1, -1, 1);
-
         gl.glMatrixMode(GL10.GL_MODELVIEW);
         gl.glLoadIdentity();
 
