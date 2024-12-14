@@ -58,18 +58,25 @@ public class estrellesMov {
         Random random = new Random();
 
         for (int i = 0; i < coord.length; i += 3) { //+3 pq per cada punt hi ha 3 coordenades
-            coord[i + 1] -= speed; //moviment cap abaix, coordenada y ( i +1)
+
+            if (coord[i + 1] > 0) {
+                coord[i + 1] += speed; //Si es meitat superior, les estrelles cap amunt
+            } else {
+                coord[i + 1] -= speed; //sino cap abaix
+            }
+
             coord[i + 2] += speed; //aproparse a camara coordenada Z (i +2)
             coord[i] *= 1.01f; //coordenada x, al multiplicar per 1,01 conseguim l'efecte d'anar-se a la vorera
 
             //En cas de que el punt surti de la camara (-1 en y)
-            if (coord[i + 1] < endY) {
-                coord[i + 1] = startY; //torna al inici de y
+            if (coord[i + 1] < endY || coord[i + 1] > startY) {
+                coord[i + 1] = (random.nextFloat() * 2) - 1;; //torna al inici de y
                 //coord[i+1] = random.nextFloat * 2 - 1 //pos de y aleatoria
                 coord[i] = random.nextFloat() * 2 - 1; //pos X aleatoria
                 coord[i + 2] = random.nextFloat() * -2.5f - 0.5f; //nova pos aleatoria a Z de -1 a -3
             }
         }
+
 
         //Actualizar el buffer
         coordBuffer.clear();
