@@ -13,6 +13,7 @@ public class estrellesMov {
     private int rows, cols; //Quantitat de punts
     private float speed;
 
+
     /**
      * Constructor
      * Genera les coordenades incials
@@ -23,6 +24,7 @@ public class estrellesMov {
         this.rows = rows;
         this.cols = cols;
         this.speed = 0.01f;
+
         coord = new float[rows * cols * 3]; // Cada punto tiene (x, y, z)
 
         Random random = new Random(); //generador de punts aleatoris
@@ -60,7 +62,7 @@ public class estrellesMov {
         for (int i = 0; i < coord.length; i += 3) { //+3 pq per cada punt hi ha 3 coordenades
 
             if (coord[i + 1] > 0) {
-                coord[i + 1] += speed; //Si es meitat superior, les estrelles cap amunt
+                coord[i + 1] += speed; //Si es sobre la nau, les estrelles cap amunt
             } else {
                 coord[i + 1] -= speed; //sino cap abaix
             }
@@ -105,5 +107,9 @@ public class estrellesMov {
 
     public void setSpeed(Float speed){
         this.speed = speed;
+    }
+
+    public Float getSpeed(){
+        return speed;
     }
 }

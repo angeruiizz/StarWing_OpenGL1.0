@@ -43,6 +43,7 @@ public class MyGLSurfaceView extends GLSurfaceView {
     @Override
     public boolean onKeyDown(int keyCode, KeyEvent event) {
         float moveDistance = 0.2f; //distancia que es mou
+        System.out.println("Tecla presionada: " + keyCode);  // Debugs
 
         switch (keyCode) {
             case KeyEvent.KEYCODE_DPAD_UP: //dalt
@@ -56,6 +57,10 @@ public class MyGLSurfaceView extends GLSurfaceView {
                 break;
             case KeyEvent.KEYCODE_DPAD_RIGHT: //drta
                 renderer.getNave().move(-moveDistance, 0);
+                break;
+            case 62: //tecla espai presionada
+                System.out.println("BOTON A PRESIONADO");
+                renderer.activateBooster();
                 break;
             default:
                 return super.onKeyDown(keyCode, event);
