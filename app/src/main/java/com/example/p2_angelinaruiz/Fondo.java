@@ -27,8 +27,8 @@ public class Fondo {
     float[] texCoords = { // Texture coords for the above face (NEW)
             0.0f, 1.0f,  // A. left-bottom (NEW)
             1.0f, 1.0f,  // B. right-bottom (NEW)
-            0.0f, 0.0f,  // C. left-top (NEW)
-            1.0f, 0.0f   // D. right-top (NEW)
+            0.0f, 0.5f,  // C. left-top (NEW)
+            1.0f, 0.5f   // D. right-top (NEW)
     };
 
     public Fondo(){
@@ -74,22 +74,14 @@ public class Fondo {
     }
 
     public void draw(GL10 gl) {
-        gl.glColor4f(1,1,1,1);
-
-        // Configurar la proyección ortográfica
-        gl.glMatrixMode(GL10.GL_PROJECTION);
-        gl.glLoadIdentity();
-        gl.glMatrixMode(GL10.GL_MODELVIEW);
-        gl.glLoadIdentity();
+        gl.glColor4f(1, 1, 1, 1);
 
         gl.glEnable(GL10.GL_TEXTURE_2D);
-
         gl.glEnableClientState(GL10.GL_VERTEX_ARRAY);
         gl.glEnableClientState(GL10.GL_TEXTURE_COORD_ARRAY);
 
         gl.glVertexPointer(3, GL10.GL_FLOAT, 0, vertexBuffer);
         gl.glTexCoordPointer(2, GL10.GL_FLOAT, 0, texCoordBuffer);
-
 
         gl.glDrawArrays(GL10.GL_TRIANGLE_STRIP, 0, 4);
 
@@ -97,5 +89,21 @@ public class Fondo {
         gl.glDisableClientState(GL10.GL_VERTEX_ARRAY);
         gl.glDisableClientState(GL10.GL_TEXTURE_COORD_ARRAY);
         gl.glDisable(GL10.GL_TEXTURE_2D);
+    }
+
+    public void updateVertices(float screenWidth, float screenHeight) {
+        float aspectRatio = screenWidth / screenHeight;
+
+        // Ajustar los vértices para que consideren la relación de aspecto
+        float[] adjustedVertices = {
+                -aspectRatio, -1.0f, 0.0f,  // 0. left-bottom-front
+                aspectRatio, -1.0f, 0.0f,  // 1. right-bottom-front
+                -aspectRatio,  1.0f, 0.0f,  // 2. left-top-front
+                aspectRatio,  1.0f, 0.0f   // 3. right-top-front
+        };
+
+        vertexBuffer.clear();
+        vertexBuffer.put(adjustedVertices);
+        vertexBuffer.position(0);
     }
 }

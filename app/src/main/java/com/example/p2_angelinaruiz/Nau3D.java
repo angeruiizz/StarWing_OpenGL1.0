@@ -34,9 +34,9 @@ public class Nau3D {
         System.out.println("Dibujando en: X=" + x + ", Y=" + y + ", Z=" + z);
 
         gl.glPushMatrix();
-        gl.glScalef(0.75f, 0.75f, 0.75f);
+        gl.glScalef(0.5f, 0.5f, 0.5f);
         gl.glTranslatef(x, y, z);
-
+        gl.glRotatef(180.0f, 0.0f, 1.0f, 0.0f); //girar 180º per que quedi el cul de la nau a darrera
 
         model.draw(gl); //fem servir el de la clase loadObject3D
         gl.glPopMatrix();

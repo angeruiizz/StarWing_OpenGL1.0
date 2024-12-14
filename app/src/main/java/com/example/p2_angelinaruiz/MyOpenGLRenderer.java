@@ -55,24 +55,29 @@ public class MyOpenGLRenderer implements Renderer {
         this.height = height;
         gl.glViewport(0, 0, width, height);
         setPerspectiveProjection(gl);
+
+        // Actualizar los vértices del fondo para que se ajusten a la pantalla
+        fondo.updateVertices(width, height);
     }
 
     @Override
     public void onDrawFrame(GL10 gl10) {
+
         // Limpiar buffers
         gl10.glClear(GL10.GL_COLOR_BUFFER_BIT | GL10.GL_DEPTH_BUFFER_BIT);
 
         // Configurar perspectiva
         setPerspectiveProjection(gl10);
         gl10.glEnable(GL10.GL_DEPTH_TEST);
+
         GLU.gluLookAt(gl10,
                 0.0f, 0.0f, zCam, // Posición de la cámara
                 0.0f, 0.0f, 0.0f, // Punto al que mira
                 0.0f, 1.0f, 0.0f  // Vector "arriba"
         );
 
-        // Actualizar posición de la luz (por ejemplo, arriba y un poco detrás de la cámara)
-        light.setPosition(new float[]{0.0f, -1.0f, 2.0f, 1.0f}); // y=2.0, z=zCam-1.0
+
+        light.setPosition(new float[]{0.0f, 2.0f, 1.0f, 1.0f}); // Luz desde arriba
 
         // Dibujar fondo
         gl10.glPushMatrix();
@@ -86,22 +91,21 @@ public class MyOpenGLRenderer implements Renderer {
 
         // Dibujar elementos 2D
         setOrthographicProjection(gl10);
-        gl10.glDisable(GL10.GL_DEPTH_TEST);
         estrellesMov.update();
         estrellesMov.draw(gl10);
     }
 
     private void setPerspectiveProjection(GL10 gl) {
-        gl.glClearDepthf(1.0f);            // Configurar profundidad máxima
-        gl.glEnable(GL10.GL_DEPTH_TEST);   // Habilitar pruebas de profundidad
-        gl.glDepthFunc(GL10.GL_LEQUAL);    // Tipo de prueba de profundidad
-        gl.glHint(GL10.GL_PERSPECTIVE_CORRECTION_HINT, GL10.GL_NICEST);  // Vista en perspectiva
+        gl.glClearDepthf(2.0f);
+        gl.glEnable(GL10.GL_DEPTH_TEST);
+        gl.glDepthFunc(GL10.GL_LEQUAL);
+        gl.glHint(GL10.GL_PERSPECTIVE_CORRECTION_HINT, GL10.GL_NICEST);
 
         gl.glMatrixMode(GL10.GL_PROJECTION);
         gl.glLoadIdentity();
 
 
-        GLU.gluPerspective(gl, 45, (float) width / height, 0.1f, 10.f);
+        GLU.gluPerspective(gl, 45, (float) width / height, 0.1f, 5.f);
 
         gl.glMatrixMode(GL10.GL_MODELVIEW);
         gl.glLoadIdentity();
@@ -111,12 +115,13 @@ public class MyOpenGLRenderer implements Renderer {
         gl.glMatrixMode(GL10.GL_PROJECTION);
         gl.glLoadIdentity();
         gl.glOrthof(-1, 1, -1, 1, -1, 1);
-        gl.glDepthMask(false);  // Desactivar escrituras en el Z-Buffer
-        gl.glDisable(GL10.GL_DEPTH_TEST);  // Desactivar pruebas de profundidad
+        gl.glDepthMask(true);
+        gl.glDisable(GL10.GL_DEPTH_TEST);
 
         gl.glMatrixMode(GL10.GL_MODELVIEW);
         gl.glLoadIdentity();
     }
+
 
     public Nau3D getNave() {
         return nau3D;
