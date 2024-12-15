@@ -19,6 +19,7 @@ public class MyOpenGLRenderer implements Renderer {
     private LoadObject3D loadObject3D;
     private Nau3D nau3D;
     private Light light;
+    private BoostHUD barraBoost;
 
     private int height;
     private int width;
@@ -43,6 +44,7 @@ public class MyOpenGLRenderer implements Renderer {
         this.nau3D = new Nau3D(modelNau);
 
         this.estrellesMov = new estrellesMov(50, 20); // puntos por línea
+        barraBoost = new BoostHUD(-0.9f, 0.9f, 1.8f, 0.05f);
 
     }
 
@@ -107,6 +109,7 @@ public class MyOpenGLRenderer implements Renderer {
 
         // Dibujar elementos 2D
         setOrthographicProjection(gl10);
+        barraBoost.draw(gl10);
         estrellesMov.update();
         estrellesMov.draw(gl10);
     }
@@ -162,55 +165,69 @@ public class MyOpenGLRenderer implements Renderer {
     }
 
     public void activateBooster() {
-        if (!boosterActive && System.currentTimeMillis() >= boosterCooldownEndTime) {
-            System.out.println("Booster activado");
+        long currentTime = System.currentTimeMillis();
 
+        if (!boosterActive && !restoringBooster && currentTime >= boosterCooldownEndTime) {
             boosterActive = true;
-            boosterEndTime = System.currentTimeMillis() + 3000; // 3 segundos de duración del booster
+            boosterEndTime = currentTime + 3000; // 3 segundos de duración del booster
 
             // Guarda la velocidad original y el tamaño
             originalSpeed = estrellesMov.getSpeed();
             originalScale = nau3D.getScale();
 
-            // Establecer la velocidad y tamaño objetivo
-            targetSpeed = originalSpeed * 3.0f; // Aumenta la velocidad por un factor de 4
-            targetScale = originalScale * 0.5f; // Reduce el tamaño a la mitad
-        } else if (System.currentTimeMillis() < boosterCooldownEndTime) {
+            // Establecer velocidad y tamaño objetivo
+            targetSpeed = originalSpeed * 4.0f;
+            targetScale = originalScale * 0.75f;
+        } else if (currentTime < boosterCooldownEndTime) {
             System.out.println("El booster está en cooldown.");
-        } else {
-            System.out.println("Booster activado después del tiempo de espera.");
         }
     }
 
     // Actualiza progresivamente la velocidad y el tamaño
     private void updateBooster() {
+        long currentTime = System.currentTimeMillis();
+
         if (boosterActive) {
-            // Interpolación de la velocidad de las estrellas
-            float speedAlpha = (System.currentTimeMillis() - boosterEndTime + 3000) / 3000.0f; // Progreso del tiempo del booster
-            estrellesMov.setSpeed(interpolate(estrellesMov.getSpeed(), targetSpeed, speedAlpha));
+            // Calcula el tiempo restante para el boost activo
+            float remainingTime = boosterEndTime - currentTime;
 
-            // Interpolación del tamaño de la nave
-            nau3D.setScale(interpolate(nau3D.getScale(), targetScale, speedAlpha));
+            if (remainingTime > 0) {
+                // Progreso del boost activo
+                float progress = remainingTime / 3000.0f; // Escalar a [0, 1]
+                barraBoost.setProgress(progress); // Actualizar la barra
 
-            // Si ha pasado el tiempo, comienza a restaurar
-            if (System.currentTimeMillis() > boosterEndTime && !restoringBooster) {
-                restoringBooster = true; // Comienza a restaurar
-                boosterEndTime = System.currentTimeMillis() + 3000; // Tiempo para restaurar
+                // Interpolación de velocidad y tamaño
+                float speedAlpha = 1.0f - progress; // Progreso inverso
+                estrellesMov.setSpeed(interpolate(originalSpeed, targetSpeed, speedAlpha));
+                nau3D.setScale(interpolate(originalScale, targetScale, speedAlpha));
+            } else {
+                // El boost activo termina
+                boosterActive = false;
+                restoringBooster = true; // Inicia la restauración
+                boosterEndTime = currentTime + 3000; // Tiempo para restaurar
             }
         }
 
         if (restoringBooster) {
-            // Interpolación hacia los valores originales (velocidad y tamaño)
-            float restoreAlphaProgress = (System.currentTimeMillis() - boosterEndTime + 3000) / 3000.0f; // Progreso de restauración
-            estrellesMov.setSpeed(interpolate(estrellesMov.getSpeed(), originalSpeed, restoreAlphaProgress));
-            nau3D.setScale(interpolate(nau3D.getScale(), originalScale, restoreAlphaProgress));
+            // Calcula el tiempo restante para la restauración
+            float restoreTime = boosterEndTime - currentTime;
 
-            // Si ya hemos restaurado completamente, desactivar el booster
-            if (restoreAlphaProgress >= 1.0f) {
-                restoringBooster = false;
-                boosterActive = false;
-                boosterCooldownEndTime = System.currentTimeMillis() + BOOSTER_COOLDOWN_TIME; // Inicia el cooldown de 5 segundos
+            if (restoreTime > 0) {
+                // Progreso de la restauración
+                float restoreAlpha = 1.0f - (restoreTime / 3000.0f); // Escalar a [0, 1]
+                barraBoost.setProgress(0.0f); // La barra queda vacía mientras restaura
+                estrellesMov.setSpeed(interpolate(targetSpeed, originalSpeed, restoreAlpha));
+                nau3D.setScale(interpolate(targetScale, originalScale, restoreAlpha));
+            } else {
+                // Restauración completa
+                restoringBooster = false; // Finaliza la restauración
+                boosterCooldownEndTime = currentTime + BOOSTER_COOLDOWN_TIME; // Cooldown de 5 segundos
             }
+        }
+
+        if (!boosterActive && !restoringBooster && currentTime < boosterCooldownEndTime) {
+            // Aquí podrías manejar el estado de cooldown si necesitas mostrarlo en el HUD
+            barraBoost.setProgress(0.0f); // Asegura que la barra esté vacía en cooldown
         }
     }
 
